@@ -1,5 +1,7 @@
 using Core.Repositories;
+using ITIWEB.APIs.Errors;
 using ITIWEB.APIs.Helpers;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Repository;
 using Repository.Data;
@@ -23,6 +25,22 @@ builder.Services.AddScoped(typeof(IGenericRepository<>) , typeof(GenericReposito
 //builder.Services.AddAutoMapper(M => M.AddProfile(new MappingProfiles()));
 builder.Services.AddAutoMapper(typeof(MappingProfiles));
 
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = actionContext =>
+    {
+        var errors = actionContext.ModelState.Where(M => M.Value.Errors.Count > 0)
+                        .SelectMany(M => M.Value.Errors)
+                        .Select(E => E.ErrorMessage)
+                        .ToArray();
+        var errorResponse = new ApiValidationErrorResponse()
+        {
+            Errors = errors
+        };
+        return new BadRequestObjectResult(errorResponse);
+        
+    };
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
