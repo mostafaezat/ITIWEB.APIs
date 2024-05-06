@@ -1,6 +1,8 @@
-﻿using Core.Entities;
+﻿using AutoMapper;
+using Core.Entities;
 using Core.Repositories;
 using Core.Specifications;
+using ITIWEB.APIs.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,10 +11,12 @@ namespace ITIWEB.APIs.Controllers
     public class ProductsController : BaseApiController
     {
         private readonly IGenericRepository<Product> _productRepository;
+        private readonly IMapper _mapper;
 
-        public ProductsController(IGenericRepository<Product> productRepository)
+        public ProductsController(IGenericRepository<Product> productRepository, IMapper mapper)
         {
             _productRepository = productRepository;
+            _mapper = mapper;
         }
 
         // Get : api/Product
@@ -25,11 +29,11 @@ namespace ITIWEB.APIs.Controllers
 
         // Get : api/Product
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProductsWithSpec()
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetProductsWithSpec()
         {
             var spec = new ProductWithBrandAndTypeSpec();
             var products =  await _productRepository.GetAllWithSpecAsync(spec);
-            return Ok(products);
+            return Ok(_mapper.Map<IEnumerable<Product>, IEnumerable<ProductDto>> (products));
         }
 
    
@@ -43,11 +47,11 @@ namespace ITIWEB.APIs.Controllers
         //}
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        public async Task<ActionResult<ProductDto>> GetProduct(int id)
         {
             var spec = new ProductWithBrandAndTypeSpec(id);
             var product = await _productRepository.GetByIdWithSpecAsync(spec);
-            return Ok(product);
+            return Ok(_mapper.Map<Product, ProductDto>(product));
         }
 
     }

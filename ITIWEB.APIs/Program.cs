@@ -1,4 +1,5 @@
 using Core.Repositories;
+using ITIWEB.APIs.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Repository;
 using Repository.Data;
@@ -18,8 +19,9 @@ builder.Services.AddDbContext<StoreContext>(options =>
 
 
 builder.Services.AddScoped(typeof(IGenericRepository<>) , typeof(GenericRepository<>));
-
-
+//old way
+//builder.Services.AddAutoMapper(M => M.AddProfile(new MappingProfiles()));
+builder.Services.AddAutoMapper(typeof(MappingProfiles));
 
 var app = builder.Build();
 
@@ -29,13 +31,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+// StaticFiles
+app.UseStaticFiles();
 
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
-
 
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
