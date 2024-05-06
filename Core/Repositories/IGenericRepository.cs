@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Core.Specifications;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,8 @@ namespace Core.Repositories
     {
         Task <IEnumerable<T>> GetAllAsync();
         Task <T> GetByIdAsync(int id);
+        Task<IEnumerable<T>> GetAllWithSpecAsync(ISpecifications<T> spec);
+        Task<T> GetByIdWithSpecAsync(ISpecifications<T> spec);
 
     }
 }
