@@ -17,6 +17,10 @@ namespace Repository.Data
 
             if (spec.Criteria != null)
                 query = query.Where(spec.Criteria);
+            if (spec.OrderBy != null)
+                query = query.OrderBy(spec.OrderBy);
+            if (spec.OrderByDes != null)
+                query = query.OrderBy(spec.OrderByDes);
             if (spec.Includes != null)
             {
                 query =  spec.Includes.Aggregate(query , (curr , includ) => curr.Include(includ));

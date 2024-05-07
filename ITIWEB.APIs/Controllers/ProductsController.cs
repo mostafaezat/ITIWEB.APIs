@@ -29,9 +29,9 @@ namespace ITIWEB.APIs.Controllers
 
         // Get : api/Product
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetProductsWithSpec()
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetProductsWithSpec(string? sort, int? brandId, int? typeId)
         {
-            var spec = new ProductWithBrandAndTypeSpec();
+            var spec = new ProductWithBrandAndTypeSpec(sort, brandId, typeId);
             var products =  await _productRepository.GetAllWithSpecAsync(spec);
             return Ok(_mapper.Map<IEnumerable<Product>, IEnumerable<ProductDto>> (products));
         }

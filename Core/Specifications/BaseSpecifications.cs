@@ -15,16 +15,27 @@ namespace Core.Specifications
         public Expression<Func<T, bool>> Criteria { get; set; }
         public List<Expression<Func<T, object>>> Includes { get; set; } 
             = new List<Expression<Func<T, object>>>();
-        public BaseSpecifications(Expression<Func<T, bool>> criteria )
+
+        public Expression<Func<T, object>> OrderBy { get; set; } 
+        public Expression<Func<T, object>> OrderByDes { get; set; }
+        public Func<Product, bool> Value { get; }
+
+        public BaseSpecifications(Expression<Func<T, bool>> criteria)
         {
-            Criteria = criteria;
-            // wrong because it is a List
-            //Includes = includes;
+            Criteria= criteria;
         }
         public BaseSpecifications() { }
         public void addingInclude(Expression<Func<T, object>> includeExpression)
         {
             Includes.Add(includeExpression);
+        }
+        public void addingOrder (Expression<Func<T, object>> OrderExpression)
+        {
+            OrderBy = OrderExpression;
+        }
+        public void addingOrderDes(Expression<Func<T, object>> OrderExpressionDes)
+        {
+            OrderByDes = OrderExpressionDes;
         }
     }
 }
