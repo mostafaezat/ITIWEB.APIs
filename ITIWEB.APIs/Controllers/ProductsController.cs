@@ -3,6 +3,7 @@ using Core.Entities;
 using Core.Repositories;
 using Core.Specifications;
 using ITIWEB.APIs.DTOs;
+using ITIWEB.APIs.Errors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -51,6 +52,9 @@ namespace ITIWEB.APIs.Controllers
         {
             var spec = new ProductWithBrandAndTypeSpec(id);
             var product = await _productRepository.GetByIdWithSpecAsync(spec);
+            //if (product == null) return NotFound();
+            if (product == null) return  NotFound(new ApiResponse(404));
+
             return Ok(_mapper.Map<Product, ProductDto>(product));
         }
 
