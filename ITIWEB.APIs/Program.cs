@@ -1,10 +1,12 @@
 using Core.Repositories;
 using ITIWEB.APIs.Errors;
 using ITIWEB.APIs.Helpers;
+using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Repository;
 using Repository.Data;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,8 +21,15 @@ builder.Services.AddDbContext<StoreContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.AddSingleton<IConnectionMultiplexer>(S=>
+{
+    var connection = ConfigurationOptions.Parse(builder.Configuration.GetConnectionString("Redis"));
+    return ConnectionMultiplexer.Connect(connection);
+});
 
 builder.Services.AddScoped(typeof(IGenericRepository<>) , typeof(GenericRepository<>));
+builder.Services.AddScoped(typeof(IBasketRepository), typeof(BasketRepository));
+
 //old way
 //builder.Services.AddAutoMapper(M => M.AddProfile(new MappingProfiles()));
 builder.Services.AddAutoMapper(typeof(MappingProfiles));
