@@ -4,6 +4,7 @@ using Core.Repositories;
 using Core.Specifications;
 using ITIWEB.APIs.DTOs;
 using ITIWEB.APIs.Errors;
+using ITIWEB.APIs.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,11 +31,12 @@ namespace ITIWEB.APIs.Controllers
 
         // Get : api/Product
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetProductsWithSpec(string? sort, int? brandId, int? typeId)
+        public async Task<ActionResult<Pagination<ProductDto>>> GetProductsWithSpec([FromQuery] ProductSpecParams productSpecParams)
         {
-            var spec = new ProductWithBrandAndTypeSpec(sort, brandId, typeId);
+            var spec = new ProductWithBrandAndTypeSpec(productSpecParams);
             var products =  await _productRepository.GetAllWithSpecAsync(spec);
-            return Ok(_mapper.Map<IEnumerable<Product>, IEnumerable<ProductDto>> (products));
+            var Data = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDto>>(products);
+            return Ok(new Pagination<ProductDto>(productSpecParams.pageIndex, productSpecParams.pageSize, Data));
         }
 
    

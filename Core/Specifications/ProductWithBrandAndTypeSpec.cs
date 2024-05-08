@@ -10,18 +10,20 @@ namespace Core.Specifications
     public class ProductWithBrandAndTypeSpec : BaseSpecifications<Product>
     {
         // use for all products 
-        public ProductWithBrandAndTypeSpec(string sort, int? brandId, int? typeId) 
+        public ProductWithBrandAndTypeSpec(ProductSpecParams Params) 
             : base(P =>
-                (!brandId.HasValue || P.ProductBrandId == brandId.Value) &&
-                (!typeId.HasValue || P.ProductTypeId == typeId.Value)
+                (!Params.brandId.HasValue || P.ProductBrandId == Params.brandId.Value) &&
+                (!Params.typeId.HasValue || P.ProductTypeId == Params.typeId.Value)
             )
         {
             addingInclude(p => p.ProductBrand);
             addingInclude(p => p.ProductType);
 
-            if (!string.IsNullOrEmpty(sort))
+            ApplyPagination(Params.pageSize * (Params.pageIndex - 1), Params.pageSize);
+
+            if (!string.IsNullOrEmpty(Params.sort))
             {
-                switch (sort)
+                switch (Params.sort)
                 {
                     case "Price":
                         addingOrder(p => p.Price);

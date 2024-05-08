@@ -21,6 +21,8 @@ namespace Repository.Data
                 query = query.OrderBy(spec.OrderBy);
             if (spec.OrderByDes != null)
                 query = query.OrderBy(spec.OrderByDes);
+            if (spec.IsPagination)
+                query = query.Skip(spec.Skip).Take(spec.Take);
             if (spec.Includes != null)
             {
                 query =  spec.Includes.Aggregate(query , (curr , includ) => curr.Include(includ));

@@ -19,12 +19,18 @@ namespace Core.Specifications
         public Expression<Func<T, object>> OrderBy { get; set; } 
         public Expression<Func<T, object>> OrderByDes { get; set; }
         public Func<Product, bool> Value { get; }
+        public int Skip { get; set; }
+        public int Take { get; set; }
+        public bool IsPagination { get; set; }
 
         public BaseSpecifications(Expression<Func<T, bool>> criteria)
         {
             Criteria= criteria;
         }
-        public BaseSpecifications() { }
+        public BaseSpecifications() 
+        {
+            IsPagination = false;
+        }
         public void addingInclude(Expression<Func<T, object>> includeExpression)
         {
             Includes.Add(includeExpression);
@@ -36,6 +42,13 @@ namespace Core.Specifications
         public void addingOrderDes(Expression<Func<T, object>> OrderExpressionDes)
         {
             OrderByDes = OrderExpressionDes;
+        }
+        public void ApplyPagination(int skip , int take)
+        {
+            Skip = skip;
+            Take = take;
+            if (Skip != 0 || Take != 0)
+                IsPagination = true;
         }
     }
 }
