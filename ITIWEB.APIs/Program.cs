@@ -1,6 +1,8 @@
 using Core.Repositories;
 using ITIWEB.APIs.Errors;
+using ITIWEB.APIs.Extensions;
 using ITIWEB.APIs.Helpers;
+using ITIWEB.APIs.Middlewares;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -26,9 +28,9 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(S=>
     var connection = ConfigurationOptions.Parse(builder.Configuration.GetConnectionString("Redis"));
     return ConnectionMultiplexer.Connect(connection);
 });
-
-builder.Services.AddScoped(typeof(IGenericRepository<>) , typeof(GenericRepository<>));
-builder.Services.AddScoped(typeof(IBasketRepository), typeof(BasketRepository));
+builder.Services.AddAppService();
+//builder.Services.AddScoped(typeof(IGenericRepository<>) , typeof(GenericRepository<>));
+//builder.Services.AddScoped(typeof(IBasketRepository), typeof(BasketRepository));
 
 //old way
 //builder.Services.AddAutoMapper(M => M.AddProfile(new MappingProfiles()));
@@ -51,7 +53,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     };
 });
 var app = builder.Build();
-
+app.UseMiddleware<ExceptionMiddleware>();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
